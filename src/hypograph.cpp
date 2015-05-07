@@ -94,9 +94,9 @@ GraphWindow3::GraphWindow3(HypoMain *main, wxFrame *parent, Model *model, wxPoin
 
 	menuPlot = new wxMenu;
 	if(mainwin->diagnostic) {
-		menuPlot->Append(ID_GraphRemove, "Delete Graph");
-		menuPlot->Append(ID_GraphPrint, "Print Graph");
-		menuPlot->Append(ID_GraphEPS, "Graph EPS");
+		//menuPlot->Append(ID_GraphRemove, "Delete Graph");
+		//menuPlot->Append(ID_GraphPrint, "Print Graph");
+		//menuPlot->Append(ID_GraphEPS, "Graph EPS");
 		menuPlot->Append(ID_Scale, "Adjust Axes");
 		menuPlot->AppendSeparator();
 	}

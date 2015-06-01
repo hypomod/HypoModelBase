@@ -154,6 +154,62 @@ SpikeDat::~SpikeDat()
 }
 
 
+SpikeDatTest::SpikeDatTest()
+{
+	diagbox = NULL;
+
+	/*
+	hist1.setsize(10000);
+	hist5.setsize(10000);
+	haz1.setsize(10000);
+	haz5.setsize(10000);
+	histquad.setsize(1000);
+	histquadx.setsize(1000);
+	histquadsm.setsize(1000);
+	histquadlin.setsize(1000);
+	hazquad.setsize(10000);
+
+	hist1norm.setsize(10000);
+	hist5norm.setsize(10000);
+	//haz1norm.setsize(10000);
+	//haz5norm.setsize(10000);
+
+	srate.setsize(100000);
+	srate1.setsize(1000000);
+	srate100.setsize(100000);
+
+	synsim.data.resize(1000100);
+	synsim.max = 1000000;
+
+	times.data.resize(100000);
+	times.max = 100000;
+	isis.data.resize(100000);
+	isis.max = 100000;
+	winfreq.data.resize(11000);
+	winfreq.max = 10000;
+
+	raterec.setsize(1000);
+	netinputrec.setsize(1000);
+
+	burstdata = NULL;
+	vasomean.data.resize(250);
+	vasomean.max = 200;
+
+	count = 0;
+	spikecount = 0;
+	start = 0;
+	freqwindow = 100;
+	maxspikes = 100000;
+	mainwin = NULL;*/
+}
+
+
+SpikeDatTest::~SpikeDatTest()
+{
+	//if(burstdata) delete burstdata;
+}
+
+
 BurstDat::BurstDat(bool select)
 {
 	selectmode = select; 
@@ -761,7 +817,8 @@ void GraphBase::BaseLoad(wxString path, wxString tag, wxTextCtrl *textbox)
 
 		if(version >= 2) {                                                  // Modern, reference by tag
 			gtag = ParseString(&readline, 'g');
-			GetGraph(gtag)->LoadDat(readline, version);
+			graph = GetGraph(gtag);
+			if(graph) graph->LoadDat(readline, version);
 		}
 		else {
 			//GetGraphFromName(gname)->LoadDat(readline, version);              // Should add code to chop off any tag first

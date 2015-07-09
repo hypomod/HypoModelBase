@@ -31,7 +31,7 @@ void ToolButton::OnLeftDClick(wxMouseEvent& event)
 
 void ToolButton::OnLeftUp(wxMouseEvent& event)
 {
-	diagbox->Write("tool button click\n");
+	//diagbox->Write("tool button click\n");
 	event.Skip();
 }
 
@@ -526,7 +526,7 @@ ToolPanel::ToolPanel(ToolBox *tbox, const wxPoint& pos, const wxSize& size)
 	toolbox = tbox;
 	mainwin = toolbox->mainwin;
 
-	if(mainwin->diagbox) mainwin->diagbox->Write("ToolPanel init\n");
+	//if(mainwin->diagbox) mainwin->diagbox->Write("ToolPanel init\n");
 
 	//pinmode = 0;
 
@@ -801,8 +801,7 @@ wxToggleButton *ToolBox::ToggleButton(int id, wxString label, int width, wxBoxSi
 
 
 void ToolBox::OnToggle(wxCommandEvent& event)
-{
-}
+{}
 
 
 void ToolSet::AddBox(ToolBox *newbox, bool serve, bool child) {
@@ -819,10 +818,11 @@ void ToolSet::AddBox(ToolBox *newbox, bool serve, bool child) {
 	//ofp.WriteLine(text.Format("box %s, child %d", newbox->boxname, child));
 	newbox->child = child;
 	//if(mod) newbox->mod = mod;
-	for(i=0; i<numtools; i++)
+	for(i=0; i<numtools; i++)             // Allow adding boxes after removal (not yet implemented)
 		if(box[i] == NULL) {
 			box[i] = newbox;
 			newbox->boxindex = i;
+			tagindex[newbox->boxname] = i;
 			return;
 		}
 

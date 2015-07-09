@@ -3,7 +3,7 @@
 
 #include "wx/wx.h"
 #include <hypotools.h>
-#include <hypodef.h>
+#include "hypodef.h"
 
 
 
@@ -21,14 +21,13 @@ DiagBox::DiagBox(MainFrame *mainwin, const wxString& title, const wxPoint& pos, 
 
 void DiagBox::Write(wxString text)
 {
-	textbox->AppendText(text);
+	textbox->AppendText(text);	
 }
 
 
-TextGrid::TextGrid(wxPanel *parent, wxSize size)
+TextGrid::TextGrid(wxWindow *parent, wxSize size)
 	: wxGrid(parent, wxID_ANY)
 {
-	int i;
 	//wxSize size(30, 30);
 	ostype = GetSystem();
 
@@ -69,14 +68,27 @@ TextGrid::~TextGrid()
 }
 
 
+wxString TextGrid::GetCell(int row, int col)
+{
+	int numrows = GetNumberRows();
+	int numcols = GetNumberCols();
+
+	if(row >= numrows || col >= numcols) return ""; 
+	else return GetCellValue(row, col);
+}
+
+
 void TextGrid::SetCell(int row, int col, wxString data)
 {
 	int numrows = GetNumberRows();
 	int numcols = GetNumberCols();
 
-	if(row >= numrows) AppendRows(row - numrows + 1);
-	if(col >= numcols) AppendRows(col - numcols + 1);
-
+	if(row >= numrows) {
+		AppendRows(row - numrows + 1);
+	}
+	if(col >= numcols) {
+		AppendCols(col - numcols + 1);
+	}
 	SetCellValue(row, col, data);
 }
 
@@ -358,6 +370,9 @@ void TextGrid::CopyUndo()
 	int x, y;
 	wxString data;
 
+	if(GetNumberRows() > undogrid->GetNumberRows()) undogrid->AppendRows(GetNumberRows() - undogrid->GetNumberRows());
+	if(GetNumberCols() > undogrid->GetNumberCols()) undogrid->AppendCols(GetNumberCols() - undogrid->GetNumberCols());
+
 	for(x=0; x<GetNumberCols(); x++)
 		for(y=0; y<GetNumberRows(); y++) {
 			data = GetCellValue(y, x);
@@ -370,6 +385,9 @@ void TextGrid::Undo()
 {
 	int x, y;
 	wxString data;
+
+	if(GetNumberRows() > undogrid->GetNumberRows()) undogrid->AppendRows(GetNumberRows() - undogrid->GetNumberRows());
+	if(GetNumberCols() > undogrid->GetNumberCols()) undogrid->AppendCols(GetNumberCols() - undogrid->GetNumberCols());
 
 	for(x=0; x<GetNumberCols(); x++)
 		for(y=0; y<GetNumberRows(); y++) {

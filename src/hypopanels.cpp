@@ -173,9 +173,9 @@ GraphBox::GraphBox(GraphWindow3 *graphw, const wxString & title)
 	//wxBoxSizer *gapparams = ParamLayout(2);
 
 	wxBoxSizer *buttonbox = new wxBoxSizer(wxHORIZONTAL);
-	wxButton *okButton = new wxButton(panel, wxID_OK, "Ok", wxDefaultPosition, wxSize(60, 30));
-	wxButton *printButton = new wxButton(panel, ID_Print, "Print", wxDefaultPosition, wxSize(60, 30));
-	wxButton *closeButton = new wxButton(panel, wxID_CANCEL, "Close", wxDefaultPosition, wxSize(60, 30));
+	wxButton *okButton = new wxButton(panel, wxID_OK, "Ok", wxDefaultPosition, wxSize(65, 30));
+	wxButton *printButton = new wxButton(panel, ID_Print, "Export EPS", wxDefaultPosition, wxSize(65, 30));
+	wxButton *closeButton = new wxButton(panel, wxID_CANCEL, "Close", wxDefaultPosition, wxSize(65, 30));
 	buttonbox->Add(okButton, 1);
 	buttonbox->Add(printButton, 1, wxLEFT, 5);
 	buttonbox->Add(closeButton, 1, wxLEFT, 5);
@@ -477,6 +477,12 @@ void ParamBox::SetStatus(wxString text)
 }
 
 
+void ParamBox::WriteVDU(wxString text)
+{
+	vdu->AppendText(text);
+}
+
+
 void ParamBox::Initialise()
 {	
 	modparams = new ParamStore;
@@ -697,7 +703,9 @@ void ParamBox::SetCheck(wxCheckBox *checkbox, bool state)
 void ParamBox::SetPanel(int id, ToolBox *toolbox)
 {
 	panelrefs->AddTool(id, toolbox);
-	Connect(id, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(ParamBox::OnPanel));
+	Connect(id, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ParamBox::OnPanel));
+
+	mainwin->diagbox->Write(text.Format("SetPanel %d %s\n", id, toolbox->boxname));
 }
 
 
@@ -729,10 +737,25 @@ void ParamBox::OnPanel(wxCommandEvent& event)
 
 	ToolBox *toolbox = panelrefs->GetTool(id);
 
+	mainwin->diagbox->Write("OnPanel\n");
+
 	if(toolbox->IsShown()) toolbox->Show(false);
 	else toolbox->Show(true);
 }
 
+
+
+void ParamBox::DataMenu()
+{
+    menuData = new wxMenu;
+    menuData->Append(ID_Select, "Selection");
+    menuData->Append(ID_Wheel, "Wheel Data");
+    menuData->Append(ID_Plot, "Plotting");
+    
+    menuBar = new wxMenuBar;
+    menuBar->Append(menuControls, "Data Tools");
+    SetMenuBar(menuBar);
+}
 
 void ParamBox::InitMenu()
 {

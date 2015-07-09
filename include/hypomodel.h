@@ -21,6 +21,8 @@
 #include "hyposound.h"
 #endif
 
+using namespace std;
+
 
 class HypoApp: public wxApp
 {
@@ -156,6 +158,7 @@ public:
 
 	void OnPaint2(wxPaintEvent& event);
 	void SetStatus(wxString);
+    void DiagText(wxString);
 	void DispParam(ParamStore *, wxString);
 	void GraphData();
 	void RunModel(ParamBox *);

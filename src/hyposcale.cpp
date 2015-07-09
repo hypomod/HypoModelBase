@@ -1,7 +1,7 @@
 
 #include <hypomodel.h>
 #include <hypograph.h>
-#include <hypodef.h>
+#include "hypodef.h"
 
 
 
@@ -256,6 +256,37 @@ ScaleBox::ScaleBox(HypoMain *main, wxFrame *draw, const wxSize& size, int gnum, 
 			}
 		}
 
+		if(boxtype == modPlot) {
+			if(i == 0) {
+				wxBoxSizer *resbox = new wxBoxSizer(wxHORIZONTAL); 
+
+				if(ostype == Mac) {
+					ScaleButton(ID_spikes, "Sp", 40, resbox);   
+					ScaleButton(ID_rateres, "Ra", 40, resbox); 
+				}
+				else {
+					ScaleButton(ID_spikes, "Spikes", 37, resbox); 
+					resbox->AddSpacer(2);
+					ScaleButton(ID_rateres, "Rate", 37, resbox); 
+				}
+				vbox->Add(resbox, 0, wxALIGN_CENTRE_HORIZONTAL|wxALIGN_CENTRE_VERTICAL|wxALL, 0);
+			}
+			if(i == 1) {
+				wxBoxSizer *binbox = new wxBoxSizer(wxHORIZONTAL); 
+				if(ostype == Mac) {
+					GraphButton("hazmode1", 0, ID_histhaz1, "Hist / Haz", 70, vbox);
+					GraphButton("binrestog1", 0, ID_binres1, "Bin Res", 45, binbox);
+					GraphButton("normtog", 0, ID_norm, "Norm", 45, binbox);
+				}
+				else {
+					GraphButton("hazmode1", 0, ID_histhaz1, "Hist / Haz", 54, vbox);
+					GraphButton("binrestog1", 0, ID_binres1, "Bin Res", 43, binbox);
+					GraphButton("normtog", 0, ID_norm, "Norm", 35, binbox);
+				}		
+				vbox->Add(binbox, 0, wxALIGN_CENTRE_HORIZONTAL|wxALIGN_CENTRE_VERTICAL|wxALL, 0);
+			}
+		}
+
 		if(boxtype == modVMN) {
 			if(i == 0) {
 				wxBoxSizer *resbox = new wxBoxSizer(wxHORIZONTAL); 
@@ -322,8 +353,8 @@ ScaleBox::ScaleBox(HypoMain *main, wxFrame *draw, const wxSize& size, int gnum, 
 			vbox->Add(hbox, 0, wxALIGN_CENTRE_HORIZONTAL|wxALIGN_CENTRE_VERTICAL|wxALL, 0);
 			}*/
 		}
-
 	}
+
 	//vbox->AddStretchSpacer(5);
 	wxBoxSizer *buttonbox = new wxBoxSizer(wxHORIZONTAL);
 	if(ostype == Mac) {
@@ -1146,6 +1177,7 @@ void ScaleBox::XSynch(int pos)
 {
 	if(gsynch) {
 		GraphDat *graph0 = graphwin[synchcon]->graphset[0]->plot[0];
+		if(!graph0->synchx) return;
 		for(i=startgraph; i<startgraph+numgraphs; i++) {
 			if(gsync[i] && !gsync[i]->GetValue()) {
 				//mainwin->diagbox->Write(text.Format("Sync break pos %d\n", i));
@@ -1153,6 +1185,7 @@ void ScaleBox::XSynch(int pos)
 			}
 			//mainwin->diagbox->Write(text.Format("Sync go pos %d\n", i));
 			graph = graphwin[i]->graphset[0]->plot[0];
+			if(!graph->synchx) continue;
 			if(pos >= 0) graph->scrollpos = pos;
 			graph->xfrom = graph0->xfrom;
 			graph->xto = graph0->xto;

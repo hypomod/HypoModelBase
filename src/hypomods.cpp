@@ -270,8 +270,9 @@ void Model::ModStore()
 	
 	for(i=0; i<modtools.numtools; i++)
 		if(modtools.box[i]) {
-			outfile.WriteLine(text.Format("%d %d %d %d %d %d", i, 
-			modtools.box[i]->mpos.x, modtools.box[i]->mpos.y, modtools.box[i]->boxsize.x, modtools.box[i]->boxsize.y, modtools.box[i]->IsVisible()));
+			outfile.WriteLine(text.Format("%d %d %d %d %d %d %s", i, 
+			modtools.box[i]->mpos.x, modtools.box[i]->mpos.y, modtools.box[i]->boxsize.x, modtools.box[i]->boxsize.y, 
+			modtools.box[i]->IsVisible(), modtools.box[i]->boxname));
 		}
 	outfile.Close();
 }
@@ -288,6 +289,8 @@ void Model::ModLoad()
 	TextFile infile, opfile;
 	wxPoint pos;
   wxSize size;
+
+	diagbox->Write("ModLoad....\n");
 
 	filepath = GetPath();
 
@@ -309,6 +312,8 @@ void Model::ModLoad()
 		opfile.Close();	
 		modbox->paramstoretag->SetLabel(initparams);
 	}
+
+	diagbox->Write("ModLoad history ok, reading boxes...\n");
 
 	// Box Load
 	filename = modname + "box.ini";
@@ -339,6 +344,8 @@ void Model::ModLoad()
 		//tofp.WriteLine(readline);
 	}
 	infile.Close();
+
+	diagbox->Write("ModLoad....OK\n");
 }
 
 

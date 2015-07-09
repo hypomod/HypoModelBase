@@ -144,6 +144,7 @@ SpikeDat::SpikeDat()
 	start = 0;
 	freqwindow = 100;
 	maxspikes = 100000;
+	normscale = 10000;
 	mainwin = NULL;
 }
 
@@ -559,6 +560,7 @@ void GraphDat::Init()
 	labelfontsize = 10;
 	tickfontsize = 10;
 	clipmode = 0;
+	synchx = true;
 }
 
 

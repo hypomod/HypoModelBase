@@ -27,7 +27,7 @@ class TextGrid : public wxGrid
 {
 public:
 		wxMenu *rightmenu;
-    TextGrid(wxPanel *parent, wxSize size);
+    TextGrid(wxWindow *parent, wxSize size);
 		~TextGrid();
 		int ostype;
 
@@ -51,6 +51,7 @@ public:
 		void ClearCol(int);
 		void ParseLine(int row, int col, wxString line);
 		void SetCell(int row, int col, wxString data);
+		wxString GetCell(int row, int col);
 };
 
 

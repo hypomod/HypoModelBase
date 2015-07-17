@@ -105,6 +105,14 @@ HypoMain::HypoMain(const wxString& title, const wxPoint& pos, const wxSize& size
     //expdata = new SpikeDat();
     //expdata->burstdata = new BurstDat();
     //expdata->burstdata->spikedata = expdata;
+
+		// Spike Analysis Module                  July 2015
+
+		expdata = new SpikeDat();
+    expdata->burstdata = new BurstDat();
+    selectdata = new SpikeDat();
+		burstdata = new BurstDat();
+   
     
     //GraphData();
     
@@ -184,11 +192,18 @@ HypoMain::HypoMain(const wxString& title, const wxPoint& pos, const wxSize& size
         
         //graphwin[graph]->Refresh();
     }
+
+		
     
     //if(diagnostic) mod->diagbox->textbox->AppendText("scalebox call\n");
     scalebox = new ScaleBox(this, this, wxDefaultSize, numdraw, gpos, mod, graphwin, 0, scaletype);
+		scalebox->GraphSwitch(0);
+		
+		//scalebox->GraphSwitch(0);
+
     //if(diagnostic) mod->diagbox->textbox->AppendText("scalebox call ok\n");
     if(mod->graphload) scalebox->GLoad("default");
+		
     if (mod->gsync) {
         scalebox->gsynch = 1;
         if(ostype != Mac) scalebox->syncbutton->SetValue(true);
@@ -203,6 +218,8 @@ HypoMain::HypoMain(const wxString& title, const wxPoint& pos, const wxSize& size
     mainsizer->Add(graphsizer, 7, wxEXPAND);
     SetSizer(mainsizer);
     Layout();
+
+	
     
     //if(mod->path != "" && !wxDirExists(mod->path)) wxMkdir(mod->path);
     //scalebox->SetMod(mod);
@@ -265,6 +282,13 @@ HypoMain::HypoMain(const wxString& title, const wxPoint& pos, const wxSize& size
     Connect(ID_ModGen, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(HypoMain::OnModGen));
     Connect(ID_Diag, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(HypoMain::OnDiagBox));
     Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(HypoMain::OnEnter));
+}
+
+
+
+void HypoMain::ToolLoad(ParamStore *toolflags)
+{
+	if((*toolflags)["burstbox"]) SpikeBox(1); 
 }
 
 
@@ -346,7 +370,7 @@ void HypoMain::FullMenu()
     //menuAnalysis->Append(ID_Info, "Info");
     //menuAnalysis->Append(ID_Burst, "Burst");
     //menuTools->Append(ID_Info, "Info");
-    //menuTools->Append(ID_Burst, "Burst");
+    menuTools->Append(ID_Burst, "Spike Analysis");
     //menuTools->Append(ID_Protocol, "Protocol");
     menuTools->Append(ID_Sound, "Sonic");
     menuTools->Append(ID_GraphAdd, "Add Graph");
@@ -712,9 +736,13 @@ void HypoMain::OnParams(wxCommandEvent& WXUNUSED(event))
 }
 
 
-void HypoMain::OnBurst(wxCommandEvent& WXUNUSED(event))
+
+void HypoMain::SpikeBox(int modmode)
 {
-    int boxwidth, boxheight;
+	 int boxwidth, boxheight;
+		
+		//wxString tag;
+
     //SetStatusText("Burst Box");
     //burstdata->spikedata = vasodata->spikedat;
     if(ostype == Mac) {
@@ -722,14 +750,60 @@ void HypoMain::OnBurst(wxCommandEvent& WXUNUSED(event))
         boxheight = 380;
     }
     else {
-        boxwidth = 300;
-        boxheight = 430;
+        boxwidth = 425;
+        boxheight = 500;
     }
     
     //mainpos = GetPosition();
-    burstbox = new BurstBox(mod, "Burst Analysis", wxPoint(320, 455), wxSize(boxwidth, boxheight), focusdata);
-    toolset->AddBox(burstbox);
+    burstbox = new BurstBox(mod, "Spike Analysis", wxPoint(0, 500), wxSize(boxwidth, boxheight), 0, "Selected");
+		//burstbox = new BurstBox(this, "Analysis", wxPoint(320, 485), wxSize(330, 430), 0, "Selected");
+		burstbox->loaddata = expdata;
+		
+		if(!expdata->graphs) {
+			SpikeModule(mod);
+			if(!modmode) scalebox->GraphSwitch();
+		}
+
+		mod->modtools.AddBox(burstbox, true);
+
+    //toolset->AddBox(burstbox);
     burstbox->Show(true);
+}
+
+
+void HypoMain::OnBurst(wxCommandEvent& WXUNUSED(event))
+{ 
+		if(burstbox) burstbox->Show(true); 
+		else SpikeBox();
+}
+
+
+void HypoMain::SpikeModule(Model *mod)
+{
+		GraphSet *graphset;
+		wxString tag = "exp";
+
+		expdata->GraphSet(mod->graphbase, "Exp ", blue, 1, "exp");
+
+		graphset = mod->graphbase->NewSet("Exp Spikes", tag + "spikes");
+		graphset->AddFlag("timeres", 1);
+		graphset->Add(tag + "rate1s", 0);
+		graphset->Add(tag + "spikes1ms", 1);
+		if(diagbox) diagbox->textbox->AppendText(graphset->Display());
+
+		graphset = mod->graphbase->NewSet("Exp Intervals", tag + "intervals");
+		graphset->AddFlag("binrestog1", 1);
+		graphset->AddFlag("hazmode1", 10);
+		graphset->AddFlag("normtog", 100);
+		graphset->Add(tag + "hist1ms", 0);
+		graphset->Add(tag + "hist5ms", 1);
+		graphset->Add(tag + "haz1ms", 10);
+		graphset->Add(tag + "haz5ms", 11);
+		graphset->Add(tag + "normhist1ms", 100);
+		graphset->Add(tag + "normhist5ms", 101);
+		graphset->Add(tag + "haz1ms", 110);
+		graphset->Add(tag + "haz5ms", 111);
+		if(diagbox) diagbox->textbox->AppendText(graphset->Display());
 }
 
 
